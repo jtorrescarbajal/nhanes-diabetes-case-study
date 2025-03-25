@@ -15,7 +15,7 @@ To understand which demographic and socioeconomic factors influence whether indi
 - `code/` – R scripts and RMarkdown file
 - `data/` – Cleaned and raw datasets (non-sensitive)
 - `figures/` – Charts and visualizations
-- `report/` – Exported final report (PDF or HTML)
+- `docs/` – Exported final report (PDF or HTML)
 
 ## How to Get the Data and Generate Outputs
 Raw `.xpt` files are downloaded directly from the official NHANES/CDC website when the analysis is run. These files are not stored in the repository.
