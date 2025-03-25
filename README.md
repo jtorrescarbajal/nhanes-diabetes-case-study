@@ -62,3 +62,5 @@ To download the data, generate cleaned CSVs, and produce the final reports (PDF/
 - `rvest` - Web scraping
 - `vcd` - Visualizing and analyzing categorical data
 
+## License
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
