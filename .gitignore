@@ -47,3 +47,16 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Ignore auto-generated files
+report/*.html
+report/*.pdf
+report/*.docx
+data/example
+data/raw/
+
+# LaTeX & TeX intermediate files
+*.tex
+*.log
+*.aux
+*.out
