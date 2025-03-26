@@ -3,16 +3,17 @@ title: "Diabetes Case Study"
 author: "Jesus Torres-Carbajal"
 date: "`r Sys.Date()`"
 output:
+  html_document:
+    self_contained: true
+    toc: true
+    toc_float: true
+    fig_caption: true
   pdf_document:
     toc: true
     toc_depth: 2
     number_sections: true
     latex_engine: xelatex
     keep_tex: true
-    fig_caption: true
-  html_document:
-    toc: true
-    toc_float: true
     fig_caption: true
 header-includes: \usepackage{float}
 ---
@@ -498,7 +499,7 @@ generate_relative_risk <- function(data, var1, var2, remove_na = TRUE) {
   stats <- assocstats(contingency_table)
   chi_test <- stats$chisq_tests[1, "X^2"]
   cramers_v <- stats$cramer
-  p_value <- format.pval(stats$chisq_tests[1, "P(> X^2)"], digits = 3, scientific = TRUE)
+  p_value <- stats$chisq_tests[1, "P(> X^2)"]
   
   # Compute Relative Risk
   relative_risk <- riskratio(contingency_table)
@@ -506,34 +507,42 @@ generate_relative_risk <- function(data, var1, var2, remove_na = TRUE) {
   results <- tibble(
     Statistic = c("Chi-Square", "p-value", "Cramér's V", "Relative Risk",
                   "Lower CI", "Upper CI"),
-    Value = c(chi_test, p_value, cramers_v, relative_risk$measure[2,1],
-              relative_risk$measure[2,2], relative_risk$measure[2,3])
-  ) %>% 
-    mutate(
-      Value = ifelse(
-        Statistic == "p-value",
-        Value,
-        signif(as.numeric(Value), 3)
-        ))
+    Value = c(
+      signif(chi_test, 3),
+      format.pval(p_value, digits = 3, scientific = TRUE),
+      signif(cramers_v, 3),
+      signif(relative_risk$measure[2,1], 3),
+      signif(relative_risk$measure[2,2], 3),
+      signif(relative_risk$measure[2,3], 3)
+      )
+  )
   
   reference_lvls <- tibble(
     !!var1 := levels(data[[var1]])[1],
     !!var2 := levels(data[[var2]])[1])
   
-  return(list(reference_lvls = reference_lvls, results = results))
+  return(list(Reference_Levels = reference_lvls, Results = results))
 }
 ```
 
 Example:
 
+Relative Risk of Diabetes Testing Based on Health Insurance Status
+
 ```{r appendix_stats_testing_insurance, results='asis'}
+rr_results <- generate_relative_risk(stat_ready_data, 'Health_Insurance', 'Blood_Testing')
+
 kable(
-  generate_relative_risk(stat_ready_data, 'Health_Insurance', 'Blood_Testing'),
-  format = "latex",
-  caption = "Relative risk of getting tested based on health insurance status.",
+  rr_results$Reference_Levels,
+  caption = "Baseline Categories for Categorical Variables.",
   align = "c"
-) %>%
-  kable_styling(latex_options = "scale_down")
+)
+
+kable(
+  rr_results$Results,
+  caption = "Summary Statistics and Relative Risk by Health Insurance Status.",
+  align = "c"
+)
 ```
 
 ### Logistic Regression for Predicting Testing Behavior

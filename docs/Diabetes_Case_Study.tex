@@ -590,7 +590,7 @@ Relative Risk (magnitude of risk associated with exposure).
 \NormalTok{  stats }\OtherTok{\textless{}{-}} \FunctionTok{assocstats}\NormalTok{(contingency\_table)}
 \NormalTok{  chi\_test }\OtherTok{\textless{}{-}}\NormalTok{ stats}\SpecialCharTok{$}\NormalTok{chisq\_tests[}\DecValTok{1}\NormalTok{, }\StringTok{"X\^{}2"}\NormalTok{]}
 \NormalTok{  cramers\_v }\OtherTok{\textless{}{-}}\NormalTok{ stats}\SpecialCharTok{$}\NormalTok{cramer}
-\NormalTok{  p\_value }\OtherTok{\textless{}{-}} \FunctionTok{format.pval}\NormalTok{(stats}\SpecialCharTok{$}\NormalTok{chisq\_tests[}\DecValTok{1}\NormalTok{, }\StringTok{"P(\textgreater{} X\^{}2)"}\NormalTok{], }\AttributeTok{digits =} \DecValTok{3}\NormalTok{, }\AttributeTok{scientific =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{  p\_value }\OtherTok{\textless{}{-}}\NormalTok{ stats}\SpecialCharTok{$}\NormalTok{chisq\_tests[}\DecValTok{1}\NormalTok{, }\StringTok{"P(\textgreater{} X\^{}2)"}\NormalTok{]}
   
   \CommentTok{\# Compute Relative Risk}
 \NormalTok{  relative\_risk }\OtherTok{\textless{}{-}} \FunctionTok{riskratio}\NormalTok{(contingency\_table)}
@@ -598,58 +598,64 @@ Relative Risk (magnitude of risk associated with exposure).
 \NormalTok{  results }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
     \AttributeTok{Statistic =} \FunctionTok{c}\NormalTok{(}\StringTok{"Chi{-}Square"}\NormalTok{, }\StringTok{"p{-}value"}\NormalTok{, }\StringTok{"Cramér\textquotesingle{}s V"}\NormalTok{, }\StringTok{"Relative Risk"}\NormalTok{,}
                   \StringTok{"Lower CI"}\NormalTok{, }\StringTok{"Upper CI"}\NormalTok{),}
-    \AttributeTok{Value =} \FunctionTok{c}\NormalTok{(chi\_test, p\_value, cramers\_v, relative\_risk}\SpecialCharTok{$}\NormalTok{measure[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{],}
-\NormalTok{              relative\_risk}\SpecialCharTok{$}\NormalTok{measure[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{], relative\_risk}\SpecialCharTok{$}\NormalTok{measure[}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{])}
-\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} 
-    \FunctionTok{mutate}\NormalTok{(}
-      \AttributeTok{Value =} \FunctionTok{ifelse}\NormalTok{(}
-\NormalTok{        Statistic }\SpecialCharTok{==} \StringTok{"p{-}value"}\NormalTok{,}
-\NormalTok{        Value,}
-        \FunctionTok{signif}\NormalTok{(}\FunctionTok{as.numeric}\NormalTok{(Value), }\DecValTok{3}\NormalTok{)}
-\NormalTok{        ))}
+    \AttributeTok{Value =} \FunctionTok{c}\NormalTok{(}
+      \FunctionTok{signif}\NormalTok{(chi\_test, }\DecValTok{3}\NormalTok{),}
+      \FunctionTok{format.pval}\NormalTok{(p\_value, }\AttributeTok{digits =} \DecValTok{3}\NormalTok{, }\AttributeTok{scientific =} \ConstantTok{TRUE}\NormalTok{),}
+      \FunctionTok{signif}\NormalTok{(cramers\_v, }\DecValTok{3}\NormalTok{),}
+      \FunctionTok{signif}\NormalTok{(relative\_risk}\SpecialCharTok{$}\NormalTok{measure[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{], }\DecValTok{3}\NormalTok{),}
+      \FunctionTok{signif}\NormalTok{(relative\_risk}\SpecialCharTok{$}\NormalTok{measure[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{], }\DecValTok{3}\NormalTok{),}
+      \FunctionTok{signif}\NormalTok{(relative\_risk}\SpecialCharTok{$}\NormalTok{measure[}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{], }\DecValTok{3}\NormalTok{)}
+\NormalTok{      )}
+\NormalTok{  )}
   
 \NormalTok{  reference\_lvls }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
     \SpecialCharTok{!!}\AttributeTok{var1 :=} \FunctionTok{levels}\NormalTok{(data[[var1]])[}\DecValTok{1}\NormalTok{],}
     \SpecialCharTok{!!}\AttributeTok{var2 :=} \FunctionTok{levels}\NormalTok{(data[[var2]])[}\DecValTok{1}\NormalTok{])}
   
-  \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\AttributeTok{reference\_lvls =}\NormalTok{ reference\_lvls, }\AttributeTok{results =}\NormalTok{ results))}
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\AttributeTok{Reference\_Levels =}\NormalTok{ reference\_lvls, }\AttributeTok{Results =}\NormalTok{ results))}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 Example:
 
-\begin{table}
-\centering\caption{\label{tab:appendix_stats_testing_insurance}Relative risk of getting tested based on health insurance status.}
+Relative Risk of Diabetes Testing Based on Health Insurance Status
 
-\centering
-\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
-\begin{tabular}[t]{c|c}
-\hline
-Health\_Insurance & Blood\_Testing\\
-\hline
-No Health Insurance & No\\
-\hline
-\end{tabular}}
-\centering
-\begin{tabular}[t]{c|c}
-\hline
-Statistic & Value\\
-\hline
-Chi-Square & 81.1\\
-\hline
-p-value & <2e-16\\
-\hline
-Cramér's V & 0.125\\
-\hline
-Relative Risk & 1.76\\
-\hline
-Lower CI & 1.53\\
-\hline
-Upper CI & 2.03\\
-\hline
-\end{tabular}
-\end{table}
+\begin{longtable}[]{@{}cc@{}}
+\caption{Baseline Categories for Categorical Variables.}\tabularnewline
+\toprule\noalign{}
+Health\_Insurance & Blood\_Testing \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Health\_Insurance & Blood\_Testing \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+No Health Insurance & No \\
+\end{longtable}
+
+\begin{longtable}[]{@{}cc@{}}
+\caption{Summary Statistics and Relative Risk by Health Insurance
+Status.}\tabularnewline
+\toprule\noalign{}
+Statistic & Value \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Statistic & Value \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Chi-Square & 81.1 \\
+p-value & \textless2e-16 \\
+Cramér's V & 0.125 \\
+Relative Risk & 1.76 \\
+Lower CI & 1.53 \\
+Upper CI & 2.03 \\
+\end{longtable}
 
 \subsubsection{Logistic Regression for Predicting Testing
 Behavior}\label{logistic-regression-for-predicting-testing-behavior}

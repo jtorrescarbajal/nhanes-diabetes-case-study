@@ -2088,7 +2088,7 @@ generate_relative_risk &lt;- function(data, var1, var2, remove_na = TRUE) {
   stats &lt;- assocstats(contingency_table)
   chi_test &lt;- stats$chisq_tests[1, &quot;X^2&quot;]
   cramers_v &lt;- stats$cramer
-  p_value &lt;- format.pval(stats$chisq_tests[1, &quot;P(&gt; X^2)&quot;], digits = 3, scientific = TRUE)
+  p_value &lt;- stats$chisq_tests[1, &quot;P(&gt; X^2)&quot;]
   
   # Compute Relative Risk
   relative_risk &lt;- riskratio(contingency_table)
@@ -2096,23 +2096,76 @@ generate_relative_risk &lt;- function(data, var1, var2, remove_na = TRUE) {
   results &lt;- tibble(
     Statistic = c(&quot;Chi-Square&quot;, &quot;p-value&quot;, &quot;Cramér&#39;s V&quot;, &quot;Relative Risk&quot;,
                   &quot;Lower CI&quot;, &quot;Upper CI&quot;),
-    Value = c(chi_test, p_value, cramers_v, relative_risk$measure[2,1],
-              relative_risk$measure[2,2], relative_risk$measure[2,3])
-  ) %&gt;% 
-    mutate(
-      Value = ifelse(
-        Statistic == &quot;p-value&quot;,
-        Value,
-        signif(as.numeric(Value), 3)
-        ))
+    Value = c(
+      signif(chi_test, 3),
+      format.pval(p_value, digits = 3, scientific = TRUE),
+      signif(cramers_v, 3),
+      signif(relative_risk$measure[2,1], 3),
+      signif(relative_risk$measure[2,2], 3),
+      signif(relative_risk$measure[2,3], 3)
+      )
+  )
   
   reference_lvls &lt;- tibble(
     !!var1 := levels(data[[var1]])[1],
     !!var2 := levels(data[[var2]])[1])
   
-  return(list(reference_lvls = reference_lvls, results = results))
+  return(list(Reference_Levels = reference_lvls, Results = results))
 }</code></pre>
 <p>Example:</p>
+<p>Relative Risk of Diabetes Testing Based on Health Insurance
+Status</p>
+<table>
+<caption>Baseline Categories for Categorical Variables.</caption>
+<thead>
+<tr class="header">
+<th align="center">Health_Insurance</th>
+<th align="center">Blood_Testing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">No Health Insurance</td>
+<td align="center">No</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Summary Statistics and Relative Risk by Health Insurance
+Status.</caption>
+<thead>
+<tr class="header">
+<th align="center">Statistic</th>
+<th align="center">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Chi-Square</td>
+<td align="center">81.1</td>
+</tr>
+<tr class="even">
+<td align="center">p-value</td>
+<td align="center">&lt;2e-16</td>
+</tr>
+<tr class="odd">
+<td align="center">Cramér’s V</td>
+<td align="center">0.125</td>
+</tr>
+<tr class="even">
+<td align="center">Relative Risk</td>
+<td align="center">1.76</td>
+</tr>
+<tr class="odd">
+<td align="center">Lower CI</td>
+<td align="center">1.53</td>
+</tr>
+<tr class="even">
+<td align="center">Upper CI</td>
+<td align="center">2.03</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="logistic-regression-for-predicting-testing-behavior" class="section level3">
 <h3>Logistic Regression for Predicting Testing Behavior</h3>
