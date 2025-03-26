@@ -1,4 +1,7 @@
 # NHANES Diabetes Case Study
+
+[View the Live Report](https://jtorrescarbajal.github.io/nhanes-diabetes-case-study/)
+
 This case study explores diabetes testing behavior among U.S. adults using the 2021-2023 NHANES dataset.
 
 ##  Objective
