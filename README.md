@@ -29,7 +29,7 @@ To download the data, generate cleaned CSVs, and produce the final reports (PDF/
 2. Run the script. This will:
    - Download and save the required `.xpt` files to `data/raw/`
    - Generate cleaned datasets in `data/processed/`
-   - Render the reports to the `report/` folder
+   - Render the reports to the `docs/` folder
 
 ## Tools Used
 - **R** – Primary language for data analysis and visualization. I deepened my understanding of R's functional programming style and how to write reproducible analysis pipelines using RMarkdown and custom functions.
